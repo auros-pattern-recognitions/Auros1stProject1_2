@@ -8,24 +8,13 @@ namespace Auros1stProject1_2
     class Program
     {
         //si정보를 변환 함수(ev(광자 에너지), e1(유전상수실수부), e2(유전상수허수부))
-        static void si_ChangeToNm(string[] a, string[] b, string[] c, int length)
+        static void si_ChangeToNm(double[] ev, double[] e1, double[] e2, int length)
         {
-            // 문자열을 숫자로 변경
-            double[] ev = new double[length - 1];
-            double[] e1 = new double[length - 1];
-            double[] e2 = new double[length - 1];
-            for (int i = 0; i < length - 1; i++)
-            {
-                ev[i] = double.Parse(a[i + 1]);
-                e1[i] = double.Parse(b[i + 1]);
-                e2[i] = double.Parse(c[i + 1]);
-            }
-
             // nm, n, k로 데이터 변환
-            double[] Nm = new double[length - 1];
-            double[] N = new double[length - 1];
-            double[] K = new double[length - 1];
-            for (int i = 0; i < length - 1; i++)
+            double[] Nm = new double[length];
+            double[] N = new double[length];
+            double[] K = new double[length];
+            for (int i = 0; i < length; i++)
             {
                 double sum = Math.Pow(e1[i], 2) + Math.Pow(e2[i], 2);
                 double Nroot = 0.5 * (Math.Sqrt(sum) + e1[i]);
@@ -38,7 +27,7 @@ namespace Auros1stProject1_2
             }
 
             // 데이터 확인
-            for (int i = 0; i < length - 1; i++)
+            for (int i = 0; i < length; i++)
             {
                 WriteLine($"{Nm[i]}     {N[i]:N3}     {K[i]:N3}");
             }
@@ -60,19 +49,8 @@ namespace Auros1stProject1_2
         }
 
         //sio2정보를 변환 함수(ev(광자 에너지), e1(유전상수실수부), e2(유전상수허수부))
-        static void sio2_ChangeToNm(string[] a, string[] b, string[] c, int length)
+        static void sio2_ChangeToNm(double[] Angstrom, double[] N, double[] K, int length)
         {
-            // 문자열을 숫자로 변경
-            double[] Angstrom = new double[length - 1];
-            double[] N = new double[length - 1];
-            double[] K = new double[length - 1];
-            for (int i = 0; i < length - 1; i++)
-            {
-                Angstrom[i] = double.Parse(a[i + 1]);
-                N[i] = double.Parse(b[i + 1]);
-                K[i] = double.Parse(c[i + 1]);
-            }
-
             // 단위 변경
             double[] Nm = new double[length - 1];
             for (int i = 0; i < length - 1; i++)
@@ -106,66 +84,45 @@ namespace Auros1stProject1_2
         static void Main(string[] args)
         {
             //
-            // 단위 변환.
+            // 단위 변환(수정1).
             //
             // 2021.03.22 정지훈
             //
             #region si단위 변환
             // 파일 읽기
             string path1 = @"C:/Users\jungj/OneDrive/바탕 화면\프로젝트 자료/BIT 1차과제 자료_오로스테크놀로지/Si.txt";
-            string si_textvalue = File.ReadAllText(path1);
+
+            string[] MeasurementSpectrumData;   // 측정 스펙트럼 데이터 저장할 배열. (한 줄씩 저장)
+            string[] SingleLineData;            // 한 줄의 스펙트럼 데이터를 임시로 저장할 배열.
+            MeasurementSpectrumData = File.ReadAllLines(path1);
 
             // 텍스트의 열 갯수 저장
-            int si_linecount = File.ReadAllLines(path1).Length;
+            int LoopNum = MeasurementSpectrumData.Length;
 
             // 광자에너지, 유전상수 실수부, 유전상수 허수부
-            string[] si_ev = new string[si_linecount];
-            string[] si_e1 = new string[si_linecount];
-            string[] si_e2 = new string[si_linecount];
+            double[] si_ev = new double[LoopNum-1];
+            double[] si_e1 = new double[LoopNum-1];
+            double[] si_e2 = new double[LoopNum-1];
 
             // 데이터 분할
             char[] delimiterChars = { ' ', '\t', '\n' };
-            string[] si_words = si_textvalue.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
 
             // 데이터를 배열에 저장
-            int i = -1, a = 0, b = 0, c = 0;
-            int array;
-            foreach (string word in si_words)
+            int startindex = 1;
+            for (int i = startindex; i < LoopNum; i++)
             {
-                i++;
-                array = i % 3;
-
-                switch (array)
-                {
-                    case 0:
-                        {
-                            si_ev[a] = word;
-                            a++;
-                        }
-                        break;
-                    case 1:
-                        {
-                            si_e1[b] = word;
-                            b++;
-                        }
-                        break;
-                    case 2:
-                        {
-                            si_e2[c] = word;
-                            c++;
-                        }
-                        break;
-                    default:
-                        break;
-                }
+                SingleLineData = MeasurementSpectrumData[i].Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
+                si_ev[i-1] = double.Parse(SingleLineData[0]);
+                si_e1[i-1] = double.Parse(SingleLineData[1]);
+                si_e2[i-1] = double.Parse(SingleLineData[2]);
             }
 
             // 데이터 단위 변환
-            si_ChangeToNm(si_ev, si_e1, si_e2, si_linecount);
+            si_ChangeToNm(si_ev, si_e1, si_e2, LoopNum-1);
             WriteLine("==================================================");
 
             // 데이터 확인
-            /*for (int j = 0; j < si_linecount; j++)
+            /*for (int j = 0; j < LoopNum-1; j++)
             {
                 WriteLine($"{si_ev[j]} {si_e1[j]} {si_e2[j]}");
             }*/
@@ -175,56 +132,32 @@ namespace Auros1stProject1_2
             #region sio2단위 변환
             // 데이터 읽기
             string path2 = @"C:/Users\jungj/OneDrive/바탕 화면\프로젝트 자료/BIT 1차과제 자료_오로스테크놀로지/SIO2.txt";
-            string sio2_textvalue = File.ReadAllText(path2);
+            string[] sio2_MeasurementSpectrumData;   // 측정 스펙트럼 데이터 저장할 배열. (한 줄씩 저장)
+            string[] sio2_SingleLineData;            // 한 줄의 스펙트럼 데이터를 임시로 저장할 배열.
+            sio2_MeasurementSpectrumData = File.ReadAllLines(path2);
 
             // 텍스트 열의 갯수 저장
-            int sio2_linecount = File.ReadAllLines(path2).Length;
+            int sio2_LoopNum = sio2_MeasurementSpectrumData.Length;
 
             //
-            string[] sio2_Angstrom = new string[sio2_linecount];
-            string[] sio2_N = new string[sio2_linecount];
-            string[] sio2_K = new string[sio2_linecount];
-
-            // 데이터 분할
-            string[] sio2_words = sio2_textvalue.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
+            double[] sio2_Angstrom = new double[sio2_LoopNum-1];
+            double[] sio2_N = new double[sio2_LoopNum-1];
+            double[] sio2_K = new double[sio2_LoopNum-1];
 
             // 데이터를 배열에 저장
-            i = -1; a = 0; b = 0; c = 0;
-            foreach (string word in sio2_words)
+            for (int i = startindex; i < sio2_LoopNum; i++)
             {
-                i++;
-                array = i % 3;
-
-                switch (array)
-                {
-                    case 0:
-                        {
-                            sio2_Angstrom[a] = word;
-                            a++;
-                        }
-                        break;
-                    case 1:
-                        {
-                            sio2_N[b] = word;
-                            b++;
-                        }
-                        break;
-                    case 2:
-                        {
-                            sio2_K[c] = word;
-                            c++;
-                        }
-                        break;
-                    default:
-                        break;
-                }
+                sio2_SingleLineData = sio2_MeasurementSpectrumData[i].Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
+                sio2_Angstrom[i - 1] = double.Parse(sio2_SingleLineData[0]);
+                sio2_N[i - 1] = double.Parse(sio2_SingleLineData[1]);
+                sio2_K[i - 1] = double.Parse(sio2_SingleLineData[2]);
             }
 
             // 데이터 단위 변환
-            sio2_ChangeToNm(sio2_Angstrom, sio2_N, sio2_K, sio2_linecount);
+            sio2_ChangeToNm(sio2_Angstrom, sio2_N, sio2_K, sio2_LoopNum);
 
             // 데이터 확인
-            /*for (int j = 0; j < sio2_linecount; j++)
+            /*for (int j = 0; j < sio2_LoopNum-1; j++)
             {
                 WriteLine($"{sio2_Angstrom[j]} {sio2_N[j]} {sio2_K[j]}");
             }*/
