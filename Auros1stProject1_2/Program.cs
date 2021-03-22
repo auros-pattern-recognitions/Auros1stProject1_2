@@ -36,7 +36,7 @@ namespace Auros1stProject1_2
             StreamWriter writer;
             writer = File.CreateText("Si_nm.txt");
             writer.Write("nm n k\n");
-            for (int i = 0; i < length - 1; i++)
+            for (int i = 0; i < length; i++)
             {
                 writer.Write(Nm[i]);
                 writer.Write("\t");
@@ -52,15 +52,15 @@ namespace Auros1stProject1_2
         static void sio2_ChangeToNm(double[] Angstrom, double[] N, double[] K, int length)
         {
             // 단위 변경
-            double[] Nm = new double[length - 1];
-            for (int i = 0; i < length - 1; i++)
+            double[] Nm = new double[length];
+            for (int i = 0; i < length; i++)
             {
                 // 옹스트롱(10의 -10승)을 나노미터(10의 -9승) 단위로 변경
                 Nm[i] = Angstrom[i] * 0.1;
             }
 
             // 데이터 확인
-            for (int i = 0; i < length - 1; i++)
+            for (int i = 0; i < length; i++)
             {
                 WriteLine($"{Nm[i]:N3}     {N[i]:N3}     {K[i]:N3}");
             }
@@ -69,7 +69,7 @@ namespace Auros1stProject1_2
             StreamWriter writer;
             writer = File.CreateText("SiO2_nm.txt");
             writer.Write("nm n k\n");
-            for (int i = 0; i < length - 1; i++)
+            for (int i = 0; i < length; i++)
             {
                 writer.Write(Nm[i]);
                 writer.Write("\t");
@@ -154,7 +154,7 @@ namespace Auros1stProject1_2
             }
 
             // 데이터 단위 변환
-            sio2_ChangeToNm(sio2_Angstrom, sio2_N, sio2_K, sio2_LoopNum);
+            sio2_ChangeToNm(sio2_Angstrom, sio2_N, sio2_K, sio2_LoopNum-1);
 
             // 데이터 확인
             /*for (int j = 0; j < sio2_LoopNum-1; j++)
