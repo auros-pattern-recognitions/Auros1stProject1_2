@@ -90,7 +90,7 @@ namespace Auros1stProject1_2
             //
             #region si단위 변환
             // 파일 읽기
-            string path1 = @"C:/Users\jungj/OneDrive/바탕 화면\프로젝트 자료/BIT 1차과제 자료_오로스테크놀로지/Si.txt";
+            string path1 = "Si.txt";
 
             string[] MeasurementSpectrumData;   // 측정 스펙트럼 데이터 저장할 배열. (한 줄씩 저장)
             string[] SingleLineData;            // 한 줄의 스펙트럼 데이터를 임시로 저장할 배열.
@@ -131,7 +131,7 @@ namespace Auros1stProject1_2
 
             #region sio2단위 변환
             // 데이터 읽기
-            string path2 = @"C:/Users\jungj/OneDrive/바탕 화면\프로젝트 자료/BIT 1차과제 자료_오로스테크놀로지/SIO2.txt";
+            string path2 = "SIO2.txt";
             string[] sio2_MeasurementSpectrumData;   // 측정 스펙트럼 데이터 저장할 배열. (한 줄씩 저장)
             string[] sio2_SingleLineData;            // 한 줄의 스펙트럼 데이터를 임시로 저장할 배열.
             sio2_MeasurementSpectrumData = File.ReadAllLines(path2);
@@ -161,6 +161,48 @@ namespace Auros1stProject1_2
             {
                 WriteLine($"{sio2_Angstrom[j]} {sio2_N[j]} {sio2_K[j]}");
             }*/
+            #endregion
+
+            #region SiN파장 간격
+            // 데이터 읽기
+            string path3 = "SiN.txt";
+            string[] siN_MeasurementSpectrumData;   // 측정 스펙트럼 데이터 저장할 배열. (한 줄씩 저장)
+            string[] siN_SingleLineData;            // 한 줄의 스펙트럼 데이터를 임시로 저장할 배열.
+            siN_MeasurementSpectrumData = File.ReadAllLines(path3);
+
+            StreamWriter NewSiNFIle = new StreamWriter("SiN.txt");
+
+            // 텍스트 열의 갯수 저장
+            int siN_LoopNum = siN_MeasurementSpectrumData.Length;
+
+            //
+            double[] siN_Wavelength = new double[siN_LoopNum - 1];
+            double[] siN_N = new double[siN_LoopNum - 1];
+            double[] siN_K = new double[siN_LoopNum - 1];
+
+            NewSiNFIle.WriteLine(
+                    $"wavelength(nm)\t" +
+                    $"n\t" +
+                    $"k");
+            // 데이터를 배열에 저장
+            for (int i = startindex; i < siN_LoopNum; i++)
+            {
+                siN_SingleLineData = siN_MeasurementSpectrumData[i].Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
+                siN_Wavelength[i - 1] = double.Parse(siN_SingleLineData[0]);
+                siN_N[i - 1] = double.Parse(siN_SingleLineData[1]);
+                siN_K[i - 1] = double.Parse(siN_SingleLineData[2]);
+                Console.WriteLine($"{siN_Wavelength[i - 1]}\t" +
+                   $"{siN_N[i - 1]}\t{siN_K[i - 1]}");
+                
+                if (siN_Wavelength[i - 1] >= 350)
+                {
+                    NewSiNFIle.WriteLine($"{siN_Wavelength[i - 1]}\t" +
+                   $"{siN_N[i - 1]}\t{siN_K[i - 1]}");
+                }
+
+            }
+
+
             #endregion
         }
     }
