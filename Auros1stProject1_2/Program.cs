@@ -84,7 +84,8 @@ namespace Auros1stProject1_2
         static void Main(string[] args)
         {
             //
-            // 단위 변환(수정1).
+            // 단위 변환(수정2).
+            // 광자 에너지와 유전상수를 파장과 굴절률, 소광률로 변환하는 코드
             //
             // 2021.03.22 정지훈
             //
@@ -108,6 +109,7 @@ namespace Auros1stProject1_2
             char[] delimiterChars = { ' ', '\t', '\n' };
 
             // 데이터를 배열에 저장
+            // column 명을 제거하기 위해서 1을 사용
             int startindex = 1;
             for (int i = startindex; i < LoopNum; i++)
             {
@@ -117,18 +119,22 @@ namespace Auros1stProject1_2
                 si_e2[i-1] = double.Parse(SingleLineData[2]);
             }
 
+            WriteLine("===================si===============================");
             // 데이터 단위 변환
-            si_ChangeToNm(si_ev, si_e1, si_e2, LoopNum-1);
-            WriteLine("==================================================");
+            si_ChangeToNm(si_ev, si_e1, si_e2, LoopNum-1);            
 
             // 데이터 확인
             /*for (int j = 0; j < LoopNum-1; j++)
             {
                 WriteLine($"{si_ev[j]} {si_e1[j]} {si_e2[j]}");
             }*/
-            WriteLine("==================================================");
             #endregion
 
+            //
+            //
+            //
+            // 옹스트롱을 나노미터 단위로 변환하는 코드
+            //
             #region sio2단위 변환
             // 데이터 읽기
             string path2 = "SIO2.txt";
@@ -139,7 +145,7 @@ namespace Auros1stProject1_2
             // 텍스트 열의 갯수 저장
             int sio2_LoopNum = sio2_MeasurementSpectrumData.Length;
 
-            //
+            // 읽어오는 값을 저장하는 배열
             double[] sio2_Angstrom = new double[sio2_LoopNum-1];
             double[] sio2_N = new double[sio2_LoopNum-1];
             double[] sio2_K = new double[sio2_LoopNum-1];
@@ -153,6 +159,7 @@ namespace Auros1stProject1_2
                 sio2_K[i - 1] = double.Parse(sio2_SingleLineData[2]);
             }
 
+            WriteLine("==============sio2====================================");
             // 데이터 단위 변환
             sio2_ChangeToNm(sio2_Angstrom, sio2_N, sio2_K, sio2_LoopNum-1);
 
@@ -163,6 +170,11 @@ namespace Auros1stProject1_2
             }*/
             #endregion
 
+            //
+            // 첫열의 공백 무시하는 코드 수정.
+            // 350 ~ 1000 사이의 파장값을 가진 데이터를 SiN2.txt에 저장
+            // 2021.03.24
+            //
             #region SiN파장 간격
             // 데이터 읽기
             string path3 = "SiN.txt";
@@ -170,39 +182,57 @@ namespace Auros1stProject1_2
             string[] siN_SingleLineData;            // 한 줄의 스펙트럼 데이터를 임시로 저장할 배열.
             siN_MeasurementSpectrumData = File.ReadAllLines(path3);
 
-            StreamWriter NewSiNFIle = new StreamWriter("SiN.txt");
-
             // 텍스트 열의 갯수 저장
             int siN_LoopNum = siN_MeasurementSpectrumData.Length;
+            // 무의미한 공백 행을 제거한다.
+            string Blank = "";
+            for (int i = 0; i < siN_LoopNum; i++)
+            {
+                // 공백이 아닌 열의 시작 위치를 확인
+                if (siN_MeasurementSpectrumData[i] == Blank)
+                    ++startindex;
+                else
+                    break;
+            }
 
-            //
-            double[] siN_Wavelength = new double[siN_LoopNum - 1];
-            double[] siN_N = new double[siN_LoopNum - 1];
-            double[] siN_K = new double[siN_LoopNum - 1];
+            // 읽어오는 값을 저장하는 배열
+            double[] siN_Wavelength = new double[siN_LoopNum - startindex];
+            double[] siN_N = new double[siN_LoopNum - startindex];
+            double[] siN_K = new double[siN_LoopNum - startindex];
 
+            // 파장의 범위가 350 ~ 1000인 값을 저장
+            StreamWriter NewSiNFIle = new StreamWriter("SiN2.txt");
             NewSiNFIle.WriteLine(
                     $"wavelength(nm)\t" +
                     $"n\t" +
                     $"k");
+
             // 데이터를 배열에 저장
             for (int i = startindex; i < siN_LoopNum; i++)
             {
                 siN_SingleLineData = siN_MeasurementSpectrumData[i].Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
-                siN_Wavelength[i - 1] = double.Parse(siN_SingleLineData[0]);
-                siN_N[i - 1] = double.Parse(siN_SingleLineData[1]);
-                siN_K[i - 1] = double.Parse(siN_SingleLineData[2]);
-                Console.WriteLine($"{siN_Wavelength[i - 1]}\t" +
-                   $"{siN_N[i - 1]}\t{siN_K[i - 1]}");
+                siN_Wavelength[i - startindex] = double.Parse(siN_SingleLineData[0]);
+                siN_N[i - startindex] = double.Parse(siN_SingleLineData[1]);
+                siN_K[i - startindex] = double.Parse(siN_SingleLineData[2]);
                 
-                if (siN_Wavelength[i - 1] >= 350)
+                if (siN_Wavelength[i - startindex] >= 350 && siN_Wavelength[i - startindex] <= 1000)
                 {
-                    NewSiNFIle.WriteLine($"{siN_Wavelength[i - 1]}\t" +
-                   $"{siN_N[i - 1]}\t{siN_K[i - 1]}");
+                    NewSiNFIle.WriteLine(
+                        $"{siN_Wavelength[i - startindex]}\t" + 
+                        $"{siN_N[i - startindex]}\t" +
+                        $"{siN_K[i - startindex]}");
                 }
-
             }
-
-
+            WriteLine("==================sin========================================");
+            // 데이터 확인
+            for (int i = startindex; i < siN_LoopNum; i++)
+            {
+                WriteLine(
+                    $"{siN_Wavelength[i - startindex]}\t" + 
+                    $"{siN_N[i - startindex]}\t" +
+                    $"{siN_K[i - startindex]}");
+            }
+            NewSiNFIle.Close();
             #endregion
         }
     }
