@@ -84,7 +84,7 @@ namespace Auros1stProject1_2
         static void Main(string[] args)
         {
             //
-            // 단위 변환(수정2).
+            // 단위 변환(수정3).
             // 광자 에너지와 유전상수를 파장과 굴절률, 소광률로 변환하는 코드
             //
             // 2021.03.22 정지훈
@@ -173,7 +173,7 @@ namespace Auros1stProject1_2
             //
             // 첫열의 공백 무시하는 코드 수정.
             // 350 ~ 980 사이의 파장값을 가진 데이터를 SiN2.txt에 저장
-            // 2021.03.24
+            // 2021.03.25
             //
             #region SiN파장 간격
             // 데이터 읽기
@@ -200,7 +200,7 @@ namespace Auros1stProject1_2
             double[] siN_N = new double[siN_LoopNum - startindex];
             double[] siN_K = new double[siN_LoopNum - startindex];
 
-            // 파장의 범위가 350 ~ 1000인 값을 저장
+            // 파장의 범위가 350 ~ 980인 값을 저장
             StreamWriter NewSiNFIle = new StreamWriter("SiN2.txt");
             NewSiNFIle.WriteLine(
                     $"wavelength(nm)\t" +
