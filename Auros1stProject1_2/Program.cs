@@ -172,7 +172,7 @@ namespace Auros1stProject1_2
 
             //
             // 첫열의 공백 무시하는 코드 수정.
-            // 350 ~ 1000 사이의 파장값을 가진 데이터를 SiN2.txt에 저장
+            // 350 ~ 980 사이의 파장값을 가진 데이터를 SiN2.txt에 저장
             // 2021.03.24
             //
             #region SiN파장 간격
@@ -215,7 +215,7 @@ namespace Auros1stProject1_2
                 siN_N[i - startindex] = double.Parse(siN_SingleLineData[1]);
                 siN_K[i - startindex] = double.Parse(siN_SingleLineData[2]);
                 
-                if (siN_Wavelength[i - startindex] >= 350 && siN_Wavelength[i - startindex] <= 1000)
+                if (siN_Wavelength[i - startindex] >= 350.0 && siN_Wavelength[i - startindex] <= 980.0)
                 {
                     NewSiNFIle.WriteLine(
                         $"{siN_Wavelength[i - startindex]}\t" + 
